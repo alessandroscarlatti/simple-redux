@@ -1,46 +1,28 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { createStore, applyMiddleware, compose } from "redux";
+import { Provider } from "react-redux";
+
+import App, { appReducer } from "./App.jsx";
 
 import "./styles.css";
 
 // the idea here is to create a really simple react-redux app...
 
-function appReducer(state = { count: 0 }, action) {
-  switch (action.type) {
-    case "COUNT_UP":
-      return {
-        count: state.count + action.increment
-      };
-    default:
-      console.log("returning default state", state);
-      return state;
-  }
-}
-
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(appReducer, composeEnhancers(applyMiddleware()));
+const rootElement = document.getElementById("root");
 
-function countUp() {
-  store.dispatch({
-    type: "COUNT_UP",
-    increment: 1
-  });
-}
-
-function App(props) {
+function ReactReduxApp() {
   return (
-    <div className="App">
-      <h1>Count: {props.store.count}</h1>
-      <button onClick={countUp}>Count Up</button>
-    </div>
+    <Provider store={store}>
+      <App greetingName={"phil"} />
+    </Provider>
   );
 }
 
-const rootElement = document.getElementById("root");
-
 function render() {
-  ReactDOM.render(<App store={store.getState()} />, rootElement);
+  ReactDOM.render(ReactReduxApp(), rootElement);
 }
 
 store.subscribe(render);
