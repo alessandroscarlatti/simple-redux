@@ -47,6 +47,32 @@ function getNewNumber(dispatch) {
   };
 }
 
+// should first reset to 0 while waiting...
+function getNewHugeNumberThunk() {
+  return function(dispatch, getState) {
+    let waitingNumber = getState().count + 1000;
+    dispatch({
+      type: "RESET_COUNT",
+      number: waitingNumber
+    });
+
+    let action = () => {
+      dispatch({
+        type: "RESET_COUNT",
+        number: Math.floor(Math.random() * 100) + 100
+      });
+    };
+
+    window.setTimeout(action, 1000);
+  };
+}
+
+function getNewHugeNumber(dispatch) {
+  return function() {
+    dispatch(getNewHugeNumberThunk());
+  };
+}
+
 // display
 
 function App(props) {
@@ -55,6 +81,7 @@ function App(props) {
       <h1>Count: {props.count}</h1>
       <button onClick={props.countUp}>Count Up, {props.greetingName}</button>
       <button onClick={props.getNewNumber}>Get a New Number</button>
+      <button onClick={props.getNewHugeNumber}>Get a New Huge Number</button>
     </div>
   );
 }
@@ -70,7 +97,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     countUp: countUp(dispatch),
-    getNewNumber: getNewNumber(dispatch)
+    getNewNumber: getNewNumber(dispatch),
+    getNewHugeNumber: getNewHugeNumber(dispatch)
   };
 }
 
